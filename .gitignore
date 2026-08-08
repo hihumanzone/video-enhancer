@@ -1,0 +1,9 @@
+.vercel/
+node_modules/
+uploads/
+outputs/
+*.mp4
+*.mov
+*.webm
+*.mkv
+*.avi

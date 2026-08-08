@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subtle Video Polish & Enhancer</title>
+  <meta name="description" content="Simple, minimal video enhancement and smart compression.">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="brand">
+        <i data-lucide="sparkles" class="brand-icon"></i>
+        <h1>Subtle Video Polish</h1>
+      </div>
+      <p class="subtitle">Minimal polish &amp; smart compression without over-processing.</p>
+    </header>
+
+    <!-- Main Studio View -->
+    <main class="studio-grid">
+
+      <!-- Left: Upload & Controls -->
+      <section class="controls-column">
+
+        <!-- Dropzone -->
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="file-input" accept="video/mp4,video/quicktime,video/webm,.mov" hidden>
+
+          <div class="drop-content" id="upload-prompt">
+            <div class="drop-icon"><i data-lucide="upload-cloud"></i></div>
+            <h3>Drop video here</h3>
+            <p>MP4, MOV or WebM</p>
+          </div>
+
+          <div class="file-info hidden" id="file-info">
+            <i data-lucide="file-video" class="file-icon"></i>
+            <div class="file-details">
+              <span class="file-name" id="file-name">filename.mp4</span>
+              <span class="file-meta" id="file-meta">0 MB</span>
+            </div>
+            <button class="btn-text" id="btn-change-file">Change</button>
+          </div>
+        </div>
+
+        <!-- Settings Card -->
+        <div class="card settings-card disabled" id="settings-card">
+
+          <div class="preset-badge">
+            <i data-lucide="check-circle-2"></i> Default: Minimal Studio Polish
+          </div>
+
+          <!-- Codec Selection -->
+          <div class="setting-row">
+            <label><i data-lucide="cpu"></i> Codec</label>
+            <div class="pill-group">
+              <button class="pill active" id="codec-h265">H.265 (Compact)</button>
+              <button class="pill" id="codec-h264">H.264 (Universal)</button>
+            </div>
+          </div>
+
+          <!-- Quality -->
+          <div class="setting-row">
+            <label><i data-lucide="shrink"></i> Quality &amp; Size</label>
+            <div class="pill-group">
+              <button class="pill active" id="crf-compact">Near-Lossless (Default)</button>
+              <button class="pill" id="crf-max">Max Fidelity</button>
+            </div>
+          </div>
+
+          <!-- Fine-tune Sliders -->
+          <details class="fine-tune-accordion">
+            <summary><i data-lucide="sliders"></i> Fine-tune Sliders</summary>
+
+            <div class="slider-box">
+              <div class="slider-item">
+                <div class="slider-hdr"><span>Exposure</span><span id="val-brightness">-1.5%</span></div>
+                <input type="range" id="slider-brightness" min="-0.05" max="0.02" step="0.005" value="-0.015">
+              </div>
+              <div class="slider-item">
+                <div class="slider-hdr"><span>Contrast</span><span id="val-contrast">+5%</span></div>
+                <input type="range" id="slider-contrast" min="1.0" max="1.15" step="0.01" value="1.05">
+              </div>
+              <div class="slider-item">
+                <div class="slider-hdr"><span>Highlights</span><span id="val-highlights">-4%</span></div>
+                <input type="range" id="slider-highlights" min="0.85" max="1.0" step="0.01" value="0.96">
+              </div>
+              <div class="slider-item">
+                <div class="slider-hdr"><span>Saturation</span><span id="val-saturation">+7%</span></div>
+                <input type="range" id="slider-saturation" min="1.0" max="1.2" step="0.01" value="1.07">
+              </div>
+              <div class="slider-item">
+                <div class="slider-hdr"><span>Sharpness</span><span id="val-sharpness">0.35</span></div>
+                <input type="range" id="slider-sharpness" min="0.0" max="0.8" step="0.05" value="0.35">
+              </div>
+            </div>
+          </details>
+
+          <!-- Channel Watermark & Logo Section -->
+          <div class="watermark-card-section">
+            <div class="wm-section-header">
+              <label class="wm-toggle-label">
+                <i data-lucide="image"></i> Channel Watermark
+                <span class="badge-enabled"><i data-lucide="check-circle-2"></i> Always On</span>
+              </label>
+              <label class="switch hidden">
+                <input type="checkbox" id="watermark-toggle" checked disabled>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="wm-controls-body" id="wm-controls-body">
+              <!-- Logo Upload Dropzone -->
+              <div class="wm-dropzone" id="wm-dropzone">
+                <input type="file" id="wm-file-input" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+                
+                <div class="wm-drop-prompt" id="wm-drop-prompt">
+                  <i data-lucide="upload" class="wm-upload-icon"></i>
+                  <span>Upload Channel Logo</span>
+                  <span class="wm-subtext">PNG, JPG, WEBP or SVG</span>
+                </div>
+
+                <div class="wm-logo-preview hidden" id="wm-logo-preview">
+                  <img id="wm-thumb-img" src="" alt="Channel Logo">
+                  <div class="wm-logo-meta">
+                    <span id="wm-logo-name">logo.png</span>
+                    <button type="button" class="btn-text btn-danger-text" id="btn-remove-logo">Remove</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Position Presets -->
+              <div class="setting-row">
+                <label><i data-lucide="layout-grid"></i> Position Preset</label>
+                <div class="wm-preset-grid">
+                  <button class="wm-preset-btn active" data-pos="bottom-right" id="wm-pos-bottom-right">Bottom Right</button>
+                  <button class="wm-preset-btn" data-pos="bottom-left" id="wm-pos-bottom-left">Bottom Left</button>
+                  <button class="wm-preset-btn" data-pos="top-right" id="wm-pos-top-right">Top Right</button>
+                  <button class="wm-preset-btn" data-pos="top-left" id="wm-pos-top-left">Top Left</button>
+                  <button class="wm-preset-btn" data-pos="center" id="wm-pos-center">Center</button>
+                </div>
+                <p class="hint-text"><i data-lucide="move"></i> Drag &amp; resize logo on preview video player!</p>
+              </div>
+
+              <!-- Watermark Sliders -->
+              <div class="slider-box wm-slider-box">
+                <div class="slider-item">
+                  <div class="slider-hdr"><span>Size (Width)</span><span id="val-wm-size">15%</span></div>
+                  <input type="range" id="slider-wm-size" min="5" max="50" step="1" value="15">
+                </div>
+                <div class="slider-item">
+                  <div class="slider-hdr"><span>Opacity</span><span id="val-wm-opacity">90%</span></div>
+                  <input type="range" id="slider-wm-opacity" min="10" max="100" step="5" value="90">
+                </div>
+                <div class="slider-item">
+                  <div class="slider-hdr"><span>Edge Padding</span><span id="val-wm-padding">70px</span></div>
+                  <input type="range" id="slider-wm-padding" min="0" max="150" step="5" value="70">
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Render Button -->
+          <button class="btn-primary" id="btn-process" disabled>
+            <i data-lucide="sparkles"></i> Enhance &amp; Compress Video
+          </button>
+
+        </div>
+      </section>
+
+      <!-- Right: Split Viewport Preview -->
+      <section class="preview-column">
+        <div class="card viewport-card">
+
+          <div class="viewport-header">
+            <div class="v-title-group">
+              <span class="v-title"><i data-lucide="split"></i> Live Comparison</span>
+              <span class="aspect-badge hidden" id="aspect-badge">16:9</span>
+            </div>
+            <div class="view-toggles">
+              <button class="view-btn active" id="mode-split">Split</button>
+              <button class="view-btn" id="mode-enhanced">Enhanced</button>
+              <button class="view-btn" id="mode-original">Original</button>
+            </div>
+          </div>
+
+          <!-- Video Viewport -->
+          <div class="viewport-box" id="viewport-box">
+
+            <div class="empty-state" id="empty-state">
+              <i data-lucide="video" class="empty-icon"></i>
+              <p>Upload a video to preview split-screen enhancement</p>
+            </div>
+
+            <div class="active-viewport hidden" id="active-viewport">
+              <video id="video-original" loop muted playsinline></video>
+
+              <div class="enhanced-overlay" id="enhanced-overlay">
+                <video id="video-enhanced" loop muted playsinline></video>
+              </div>
+
+              <!-- Watermark Interactive Overlay -->
+              <div class="watermark-viewport-overlay hidden" id="watermark-viewport-overlay">
+                <div class="wm-overlay-box" id="wm-overlay-box">
+                  <img id="wm-viewport-img" src="" alt="Watermark Preview">
+                  <div class="wm-resize-handle nw"></div>
+                  <div class="wm-resize-handle ne"></div>
+                  <div class="wm-resize-handle sw"></div>
+                  <div class="wm-resize-handle se"></div>
+                </div>
+              </div>
+
+              <!-- Split Handle -->
+              <div class="split-handle" id="split-handle">
+                <div class="handle-bar"></div>
+                <div class="handle-knob"><i data-lucide="chevrons-left-right"></i></div>
+              </div>
+
+              <span class="tag tag-left">Original</span>
+              <span class="tag tag-right">Enhanced</span>
+
+              <!-- Transport -->
+              <div class="transport-bar">
+                <button class="t-btn" id="btn-play-pause"><i data-lucide="play"></i></button>
+                <div class="t-progress" id="t-progress">
+                  <div class="t-fill" id="t-fill"></div>
+                </div>
+                <span class="t-time" id="t-time">00:00</span>
+                <button class="t-btn" id="btn-mute"><i data-lucide="volume-2"></i></button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Render Overlay -->
+          <div class="render-overlay hidden" id="render-overlay">
+            <div class="spinner"></div>
+            <span class="render-msg" id="render-msg">Applying Subtle Polish...</span>
+            <div class="render-track"><div class="render-bar" id="render-bar"></div></div>
+            <span class="render-pct" id="render-pct">0%</span>
+          </div>
+
+          <!-- Download Bar -->
+          <div class="download-card hidden" id="download-card">
+            <div class="d-text">
+              <i data-lucide="check-circle-2" class="d-icon"></i>
+              <div>
+                <strong>Enhancement Complete</strong>
+                <p id="d-stats">Original vs Enhanced</p>
+              </div>
+            </div>
+            <a href="#" id="btn-download" class="btn-download" download>
+              <i data-lucide="download"></i> Download Video
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+  <script>lucide.createIcons();</script>
+</body>
+</html>
