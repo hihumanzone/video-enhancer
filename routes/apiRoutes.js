@@ -53,17 +53,23 @@ router.post('/api/enhance', upload.fields([{ name: 'video', maxCount: 1 }, { nam
   const codec         = req.body.codec || 'h265';
 
   const options = {
-    input:      inputPath,
-    output:     outputPath,
+    input:           inputPath,
+    output:          outputPath,
     codec,
-    brightness: parseNum(req.body.brightness, DEFAULTS.brightness),
-    contrast:   parseNum(req.body.contrast,   DEFAULTS.contrast),
-    highlights: parseNum(req.body.highlights, DEFAULTS.highlights),
-    saturation: parseNum(req.body.saturation, DEFAULTS.saturation),
-    vibrance:   parseNum(req.body.vibrance,   DEFAULTS.vibrance),
-    sharpness:  parseNum(req.body.sharpness,  DEFAULTS.sharpness),
-    crf:        parseNum(req.body.crf, codec === 'h265' ? 24 : 20),
-    preset:     'fast'
+    brightness:      parseNum(req.body.brightness, DEFAULTS.brightness),
+    contrast:        parseNum(req.body.contrast,   DEFAULTS.contrast),
+    highlights:      parseNum(req.body.highlights, DEFAULTS.highlights),
+    saturation:      parseNum(req.body.saturation, DEFAULTS.saturation),
+    vibrance:        parseNum(req.body.vibrance,   DEFAULTS.vibrance),
+    sharpness:       parseNum(req.body.sharpness,  DEFAULTS.sharpness),
+    slowdown:        parseNum(req.body.slowdown,   DEFAULTS.slowdown),
+    crf:             parseNum(req.body.crf, codec === 'h265' ? 24 : 20),
+    preset:          'fast',
+    removeSynthid:   req.body.removeSynthid === 'true' || req.body.removeSynthid === true,
+    synthidStrength: parseNum(req.body.synthidStrength, 0.10),
+    removeWatermark: req.body.removeWatermark === 'true' || req.body.removeWatermark === true,
+    watermarkType:   req.body.watermarkType || 'gemini',
+    watermarkRect:   req.body.watermarkRect || null
   };
 
   if (watermarkFile && req.body.hasWatermark !== 'false') {

@@ -12,7 +12,7 @@ const { spawn } = require('node:child_process');
 const ffmpegPath = require('ffmpeg-static');
 
 const { getImageAspect } = require('./lib/ffmpeg/imageProbe');
-const { probeVideoDimensions } = require('./lib/ffmpeg/videoProbe');
+const { probeVideoInfo } = require('./lib/ffmpeg/videoProbe');
 const { DEFAULTS, buildFilterGraph, buildWatermarkFilterGraph } = require('./lib/ffmpeg/filterBuilder');
 
 // Ensure ffmpeg-static binary is executable (Vercel serverless / Linux)
@@ -32,7 +32,7 @@ const CPU_CORES = Math.min(16, DETECTED_CORES);
 
 /**
  * Enhances and compresses a video file.
- * @param {object}   options    - { input, output, codec, crf, preset, brightness, ... }
+ * @param {object}   options    - { input, output, codec, crf, preset, brightness, slowdown, ... }
  * @param {function} onProgress - Optional callback receiving progress percentage (0-100)
  * @returns {Promise<object>}   - Resolves with { outputPath, elapsed, inMB, outMB, savingsPct, codec }
  */
@@ -66,10 +66,18 @@ function enhanceVideo(options = {}, onProgress = null) {
       return reject(new Error('Output path must differ from input to prevent data loss.'));
     }
 
+    const videoInfo = await probeVideoInfo(inputPath);
+    const videoDims = { width: videoInfo.width, height: videoInfo.height };
+    const hasAudio  = videoInfo.hasAudio;
+
+    const slowdown = options.slowdown !== undefined
+      ? Number(options.slowdown)
+      : (options.speed !== undefined && Number(options.speed) > 0 ? 1 / Number(options.speed) : DEFAULTS.slowdown);
+
     // Check if watermark is provided and exists
     const hasWatermark = Boolean(options.watermark && fs.existsSync(options.watermark));
 
-    const baseFilterString = buildFilterGraph(options);
+    const baseFilterString = buildFilterGraph({ ...options, slowdown }, videoDims);
     const speedPreset = options.preset || 'fast';
 
     // Codec selection
@@ -92,16 +100,31 @@ function enhanceVideo(options = {}, onProgress = null) {
       const watermarkPath = path.resolve(options.watermark);
       args.push('-i', watermarkPath);
 
-      const videoDims = await probeVideoDimensions(inputPath);
       const logoAspect = getImageAspect(watermarkPath);
-
       const filterComplex = buildWatermarkFilterGraph(options, baseFilterString, videoDims, logoAspect);
 
       args.push('-filter_complex', filterComplex);
       args.push('-map', '[outv]');
-      args.push('-map', '0:a?');
+      if (slowdown && slowdown !== 1 && hasAudio) {
+        args.push('-map', '0:a?');
+        const atempoVal = (1 / slowdown).toFixed(6);
+        args.push('-af', `atempo=${atempoVal}`);
+        args.push('-c:a', 'aac', '-b:a', '192k');
+      } else if (hasAudio) {
+        args.push('-map', '0:a?');
+        args.push('-c:a', 'copy');
+      }
     } else {
       args.push('-vf', baseFilterString);
+      if (slowdown && slowdown !== 1 && hasAudio) {
+        const atempoVal = (1 / slowdown).toFixed(6);
+        args.push('-af', `atempo=${atempoVal}`);
+        args.push('-c:a', 'aac', '-b:a', '192k');
+      } else if (hasAudio) {
+        args.push('-c:a', 'copy');
+      } else {
+        args.push('-an');
+      }
     }
 
     args.push(
@@ -113,7 +136,11 @@ function enhanceVideo(options = {}, onProgress = null) {
       '-colorspace', 'bt709',
       '-color_primaries', 'bt709',
       '-color_trc', 'bt709',
-      '-c:a', 'copy',
+      '-map_metadata', '-1',
+      '-map_chapters', '-1',
+      '-fflags', '+bitexact',
+      '-flags:v', '+bitexact',
+      '-flags:a', '+bitexact',
       '-movflags', '+faststart'
     );
 
@@ -135,6 +162,8 @@ function enhanceVideo(options = {}, onProgress = null) {
     console.log(`  Output:    ${outputPath}`);
     console.log(`  Codec:     ${isH265 ? 'H.265 / HEVC' : 'H.264 / AVC'}`);
     console.log(`  CRF:       ${crf}`);
+    console.log(`  Slowdown:  ${slowdown}x (${(1/slowdown).toFixed(3)}x speed)`);
+    console.log(`  Metadata:  Stripped (Minimal required stream data)`);
     console.log(`  Threads:   ${CPU_CORES}`);
     console.log('--------------------------------------------------');
 
@@ -207,8 +236,15 @@ if (require.main === module) {
     else if (flag === '--vibrance')                opts.vibrance   = parseFloat(argv[++i]);
     else if (flag === '--sharpness')               opts.sharpness  = parseFloat(argv[++i]);
     else if (flag === '--highlights')              opts.highlights = parseFloat(argv[++i]);
+    else if (flag === '--slowdown')                opts.slowdown   = parseFloat(argv[++i]);
+    else if (flag === '--speed')                   opts.speed      = parseFloat(argv[++i]);
     else if (flag === '--crf')                     opts.crf        = parseInt(argv[++i], 10);
     else if (flag === '--preset')                  opts.preset     = argv[++i];
+    else if (flag === '--remove-synthid')          opts.removeSynthid = true;
+    else if (flag === '--synthid-strength')        opts.synthidStrength = parseFloat(argv[++i]);
+    else if (flag === '--remove-watermark')        opts.removeWatermark = true;
+    else if (flag === '--watermark-type')          opts.watermarkType = argv[++i];
+    else if (flag === '--watermark-rect')          opts.watermarkRect = argv[++i];
     else if (flag === '--watermark')               opts.watermark  = argv[++i];
     else if (flag === '--watermark-position')      opts.watermarkPosition = argv[++i];
     else if (flag === '--watermark-size')          opts.watermarkSize = parseFloat(argv[++i]);
@@ -226,13 +262,18 @@ Options:
   --codec <h264|h265>        Video codec (default: h265)
   --crf <value>              Quality factor (default: 24 for H.265, 20 for H.264)
   --preset <preset>          Speed: ultrafast, fast, medium (default: fast)
+  --remove-synthid           Scrub invisible SynthID watermark (frequency perturbation)
+  --synthid-strength <val>   SynthID scrub strength 0.05 to 0.20 (default: 0.10)
+  --remove-watermark         Remove visible AI watermark (Gemini / Veo / NotebookLM)
+  --watermark-type <type>    Type: gemini, veo, notebooklm (default: gemini)
+  --watermark-rect <x,y,w,h> Custom bounding box for watermark removal
   --brightness <val>         Exposure adjustment (default: ${DEFAULTS.brightness})
   --contrast <val>           Contrast multiplier (default: ${DEFAULTS.contrast})
   --saturation <val>         Saturation multiplier (default: ${DEFAULTS.saturation})
   --vibrance <val>           Vibrance intensity (default: ${DEFAULTS.vibrance})
   --sharpness <val>          Sharpness amount (default: ${DEFAULTS.sharpness})
   --highlights <val>         Highlight rolloff (default: ${DEFAULTS.highlights})
-  --watermark <path>         Path to logo image (PNG/JPG/WEBP)
+  --watermark <path>         Path to channel logo overlay image (PNG/JPG/WEBP)
   --watermark-position <pos> Position: bottom-right, bottom-left, top-right, top-left, center, custom
   --watermark-size <pct>     Size relative to video width % (default: 15)
   --watermark-opacity <val>  Opacity 0.1 to 1.0 (default: 0.9)

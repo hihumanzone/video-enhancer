@@ -15,7 +15,8 @@ export const appState = {
     contrast: 1.05,
     highlights: 0.96,
     saturation: 1.07,
-    sharpness: 0.35
+    sharpness: 0.35,
+    slowdown: 1.05
   },
 
   watermark: {
@@ -29,5 +30,15 @@ export const appState = {
     yPct: 100,
     logoUrl: null,
     aspectRatio: 1.0
+  },
+
+  synthid: {
+    enabled: false,
+    strength: 0.10
+  },
+
+  aiWatermark: {
+    enabled: false,
+    type: 'gemini'
   }
 };

@@ -73,6 +73,17 @@ export function initEnhancerApi(dom) {
     formData.append('highlights', sliders.highlights.value);
     formData.append('saturation', sliders.saturation.value);
     formData.append('sharpness',  sliders.sharpness.value);
+    formData.append('slowdown',   sliders.slowdown ? sliders.slowdown.value : '1.05');
+
+    // SynthID & AI Watermark Remover parameters
+    if (appState.synthid && appState.synthid.enabled) {
+      formData.append('removeSynthid', 'true');
+      formData.append('synthidStrength', appState.synthid.strength || 0.10);
+    }
+    if (appState.aiWatermark && appState.aiWatermark.enabled) {
+      formData.append('removeWatermark', 'true');
+      formData.append('watermarkType', appState.aiWatermark.type || 'gemini');
+    }
 
     const wm = appState.watermark;
     if (wm.enabled && wm.file) {

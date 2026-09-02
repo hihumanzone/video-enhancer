@@ -19,30 +19,38 @@ export function initPlayerControls(dom, { updateWatermarkOverlay }) {
     labels
   } = dom;
 
-  // Real-time CSS Filter Preview on Enhanced Video element
+  // Real-time CSS Filter & Speed Preview on Enhanced Video element
   function applyPreview() {
     const br = parseFloat(sliders.brightness.value);
     const ct = parseFloat(sliders.contrast.value);
     const hl = parseFloat(sliders.highlights.value);
     const st = parseFloat(sliders.saturation.value);
     const sh = parseFloat(sliders.sharpness.value);
+    const sd = parseFloat(sliders.slowdown ? sliders.slowdown.value : 1.05);
 
     appState.sliders.brightness = br;
     appState.sliders.contrast   = ct;
     appState.sliders.highlights = hl;
     appState.sliders.saturation = st;
     appState.sliders.sharpness  = sh;
+    appState.sliders.slowdown   = sd;
 
     labels.brightness.textContent = `${(br * 100).toFixed(1)}%`;
     labels.contrast.textContent   = `+${((ct - 1) * 100).toFixed(0)}%`;
     labels.highlights.textContent = `${((hl - 1) * 100).toFixed(0)}%`;
     labels.saturation.textContent = `+${((st - 1) * 100).toFixed(0)}%`;
     labels.sharpness.textContent  = sh.toFixed(2);
+    if (labels.slowdown) {
+      labels.slowdown.textContent = `${sd.toFixed(2)}x`;
+    }
 
     let filter = `brightness(${1 + br}) contrast(${ct}) saturate(${st})`;
     if (sh > 0.2) filter += ` contrast(${ct + 0.015})`;
 
     videoEnhanced.style.filter = filter;
+    if (sd > 0 && videoEnhanced) {
+      videoEnhanced.playbackRate = 1 / sd;
+    }
   }
 
   Object.values(sliders).forEach(sl => sl.addEventListener('input', applyPreview));

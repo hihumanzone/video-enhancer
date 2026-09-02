@@ -1,4 +1,5 @@
 /**
- * Legacy entry point fallback — redirects to modular ES module entry point
+ * Legacy entry point fallback — imports modular ES module entry point
  */
-import './js/app.js';
+export * from './js/app.js';
+
