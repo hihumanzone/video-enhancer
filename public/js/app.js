@@ -88,66 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
     wmOverlayBox:    $('wm-overlay-box'),
     wmViewportImg:   $('wm-viewport-img'),
 
-    // SynthID & AI Watermark Remover DOM
-    toggleSynthid:            $('toggle-synthid'),
-    synthidOptions:           $('synthid-options'),
-    synthidStrengthLight:     $('synthid-strength-light'),
-    synthidStrengthValidated: $('synthid-strength-validated'),
-    synthidStrengthHigh:      $('synthid-strength-high'),
-    toggleAiWatermark:        $('toggle-ai-watermark'),
-    aiWatermarkOptions:       $('ai-watermark-options'),
-    wmTypeGemini:             $('wm-type-gemini'),
-    wmTypeVeo:                $('wm-type-veo'),
-    wmTypeNotebooklm:         $('wm-type-notebooklm')
-  };
-
-  // ── SynthID & AI Watermark Event Handlers ────────────────────────────────
-  if (dom.toggleSynthid) {
-    dom.toggleSynthid.addEventListener('change', (e) => {
-      appState.synthid.enabled = e.target.checked;
-      if (dom.synthidOptions) {
-        dom.synthidOptions.classList.toggle('hidden', !e.target.checked);
-      }
-    });
-  }
-
-  const synthidStrengthBtns = [
-    dom.synthidStrengthLight,
-    dom.synthidStrengthValidated,
-    dom.synthidStrengthHigh
-  ].filter(Boolean);
-
-  synthidStrengthBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      synthidStrengthBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      appState.synthid.strength = parseFloat(btn.dataset.val);
-    });
-  });
-
-  if (dom.toggleAiWatermark) {
-    dom.toggleAiWatermark.addEventListener('change', (e) => {
-      appState.aiWatermark.enabled = e.target.checked;
-      if (dom.aiWatermarkOptions) {
-        dom.aiWatermarkOptions.classList.toggle('hidden', !e.target.checked);
-      }
-    });
-  }
-
-  const aiWmTypeBtns = [
-    dom.wmTypeGemini,
-    dom.wmTypeVeo,
-    dom.wmTypeNotebooklm
-  ].filter(Boolean);
-
-  aiWmTypeBtns.forEach((btn) => {
-    btn.addEventListener('click', () => {
-      aiWmTypeBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      appState.aiWatermark.type = btn.dataset.type;
-    });
-  });
-
   // ── Initialize Submodules ─────────────────────────────────────────────────
   const watermarkCtrl = initWatermark(dom);
   const playerCtrl    = initPlayerControls(dom, watermarkCtrl);
