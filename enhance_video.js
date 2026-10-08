@@ -240,11 +240,6 @@ if (require.main === module) {
     else if (flag === '--speed')                   opts.speed      = parseFloat(argv[++i]);
     else if (flag === '--crf')                     opts.crf        = parseInt(argv[++i], 10);
     else if (flag === '--preset')                  opts.preset     = argv[++i];
-    else if (flag === '--remove-synthid')          opts.removeSynthid = true;
-    else if (flag === '--synthid-strength')        opts.synthidStrength = parseFloat(argv[++i]);
-    else if (flag === '--remove-watermark')        opts.removeWatermark = true;
-    else if (flag === '--watermark-type')          opts.watermarkType = argv[++i];
-    else if (flag === '--watermark-rect')          opts.watermarkRect = argv[++i];
     else if (flag === '--watermark')               opts.watermark  = argv[++i];
     else if (flag === '--watermark-position')      opts.watermarkPosition = argv[++i];
     else if (flag === '--watermark-size')          opts.watermarkSize = parseFloat(argv[++i]);
@@ -262,11 +257,6 @@ Options:
   --codec <h264|h265>        Video codec (default: h265)
   --crf <value>              Quality factor (default: 24 for H.265, 20 for H.264)
   --preset <preset>          Speed: ultrafast, fast, medium (default: fast)
-  --remove-synthid           Scrub invisible SynthID watermark (frequency perturbation)
-  --synthid-strength <val>   SynthID scrub strength 0.05 to 0.20 (default: 0.10)
-  --remove-watermark         Remove visible AI watermark (Gemini / Veo / NotebookLM)
-  --watermark-type <type>    Type: gemini, veo, notebooklm (default: gemini)
-  --watermark-rect <x,y,w,h> Custom bounding box for watermark removal
   --brightness <val>         Exposure adjustment (default: ${DEFAULTS.brightness})
   --contrast <val>           Contrast multiplier (default: ${DEFAULTS.contrast})
   --saturation <val>         Saturation multiplier (default: ${DEFAULTS.saturation})
