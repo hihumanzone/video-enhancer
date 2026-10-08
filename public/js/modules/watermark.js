@@ -163,7 +163,7 @@ export function initWatermark(dom) {
 
   btnRemoveLogo.addEventListener('click', (e) => {
     e.stopPropagation();
-    removeWatermarkLogo();
+    removeChannelWatermarkLogo();
   });
 
   function handleWatermarkFile(file, saveToStorage = true) {
@@ -215,7 +215,7 @@ export function initWatermark(dom) {
     updateWatermarkOverlay();
   }
 
-  function removeWatermarkLogo() {
+  function removeChannelWatermarkLogo() {
     wmState.file = null;
     if (wmState.logoUrl && !wmState.logoUrl.startsWith('data:')) {
       URL.revokeObjectURL(wmState.logoUrl);
@@ -484,6 +484,6 @@ export function initWatermark(dom) {
   return {
     updateWatermarkOverlay,
     handleWatermarkFile,
-    removeWatermarkLogo
+    removeChannelWatermarkLogo
   };
 }
