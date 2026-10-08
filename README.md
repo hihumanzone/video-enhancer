@@ -42,7 +42,6 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 # Basic video polish and H.265 compression
 node enhance_video.js -i input.mp4 -o clean.mp4
 
-# Remove SynthID invisible watermark and Gemini visible logo
 node enhance_video.js -i input.mp4 -o polished.mp4 --watermark logo.png --watermark-position bottom-right --watermark-size 15 --watermark-opacity 0.9
 
 # Full CLI Options
