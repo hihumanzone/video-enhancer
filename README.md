@@ -1,4 +1,4 @@
-# Subtle Video Polish (v3.0)
+# Subtle Video Polish
 
 A focused video enhancement and smart compression platform with optional channel watermark overlay, built with Node.js, Express, and FFmpeg.
 
