@@ -32,13 +32,4 @@ export const appState = {
     aspectRatio: 1.0
   },
 
-  synthid: {
-    enabled: false,
-    strength: 0.10
-  },
-
-  aiWatermark: {
-    enabled: false,
-    type: 'gemini'
-  }
 };
