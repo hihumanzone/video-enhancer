@@ -108,62 +108,6 @@
             </div>
           </details>
 
-          <!-- SynthID & AI Watermark Removal Section -->
-          <div class="watermark-card-section synthid-remover-section">
-            <div class="wm-section-header">
-              <label class="wm-toggle-label">
-                <i data-lucide="shield-alert"></i> SynthID &amp; AI Watermark Scrubbing
-              </label>
-            </div>
-
-            <div class="wm-controls-body">
-              <!-- Invisible SynthID Toggle -->
-              <div class="toggle-option-row">
-                <div class="toggle-option-info">
-                  <span class="toggle-option-title"><i data-lucide="eye-off"></i> Remove SynthID Watermark</span>
-                  <span class="toggle-option-desc">Scrubs invisible spectral watermarks embedded by Google Gemini/Veo using lossy frequency perturbation.</span>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" id="toggle-synthid">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-
-              <!-- SynthID Scrubbing Strength -->
-              <div class="setting-row synthid-options hidden" id="synthid-options">
-                <label><i data-lucide="zap"></i> Scrubbing Strength</label>
-                <div class="pill-group">
-                  <button class="pill" id="synthid-strength-light" data-val="0.05">Light (0.05)</button>
-                  <button class="pill active" id="synthid-strength-validated" data-val="0.10">Validated (0.10)</button>
-                  <button class="pill" id="synthid-strength-high" data-val="0.15">High (0.15)</button>
-                </div>
-                <p class="hint-text"><i data-lucide="info"></i> 0.10 is the validated minimum in froggeric/gemini-watermark-and-synthid-remover</p>
-              </div>
-
-              <!-- Visible AI Watermark Removal Toggle -->
-              <div class="toggle-option-row" style="margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px;">
-                <div class="toggle-option-info">
-                  <span class="toggle-option-title"><i data-lucide="sparkle"></i> Remove Visible AI Watermark</span>
-                  <span class="toggle-option-desc">Removes corner logo (Gemini Sparkle, Veo text, NotebookLM) using delogo interpolation.</span>
-                </div>
-                <label class="switch">
-                  <input type="checkbox" id="toggle-ai-watermark">
-                  <span class="toggle-slider"></span>
-                </label>
-              </div>
-
-              <!-- Visible AI Watermark Type Selector -->
-              <div class="setting-row ai-watermark-options hidden" id="ai-watermark-options">
-                <label><i data-lucide="layers"></i> Target Watermark Profile</label>
-                <div class="pill-group">
-                  <button class="pill active" id="wm-type-gemini" data-type="gemini">Gemini Diamond</button>
-                  <button class="pill" id="wm-type-veo" data-type="veo">Veo Video</button>
-                  <button class="pill" id="wm-type-notebooklm" data-type="notebooklm">NotebookLM</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
           <!-- Channel Watermark & Logo Section -->
           <div class="watermark-card-section">
             <div class="wm-section-header">
