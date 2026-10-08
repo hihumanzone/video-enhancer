@@ -86,7 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
     valWmPadding:    $('val-wm-padding'),
     watermarkViewportOverlay: $('watermark-viewport-overlay'),
     wmOverlayBox:    $('wm-overlay-box'),
-    wmViewportImg:   $('wm-viewport-img'),
+    wmViewportImg:   $('wm-viewport-img')
+  };
 
   // ── Initialize Submodules ─────────────────────────────────────────────────
   const watermarkCtrl = initWatermark(dom);
