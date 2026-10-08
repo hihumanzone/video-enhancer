@@ -40,39 +40,6 @@ body {
   gap: 1.5rem;
 }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--border);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.brand-icon {
-  color: var(--cyan);
-  width: 24px;
-  height: 24px;
-}
-
-.brand h1 {
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.subtitle {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-}
-
 /* ── Grid Layout ─────────────────────────────────────────────────────────── */
 
 .studio-grid {
@@ -950,12 +917,6 @@ input:checked + .toggle-slider:before {
 @media (max-width: 600px) {
   body {
     padding: 1rem 0.75rem;
-  }
-
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem;
   }
 
   .viewport-box {
