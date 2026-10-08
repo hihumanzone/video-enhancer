@@ -64,12 +64,7 @@ router.post('/api/enhance', upload.fields([{ name: 'video', maxCount: 1 }, { nam
     sharpness:       parseNum(req.body.sharpness,  DEFAULTS.sharpness),
     slowdown:        parseNum(req.body.slowdown,   DEFAULTS.slowdown),
     crf:             parseNum(req.body.crf, codec === 'h265' ? 24 : 20),
-    preset:          'fast',
-    removeSynthid:   req.body.removeSynthid === 'true' || req.body.removeSynthid === true,
-    synthidStrength: parseNum(req.body.synthidStrength, 0.10),
-    removeWatermark: req.body.removeWatermark === 'true' || req.body.removeWatermark === true,
-    watermarkType:   req.body.watermarkType || 'gemini',
-    watermarkRect:   req.body.watermarkRect || null
+    preset:          'fast'
   };
 
   if (watermarkFile && req.body.hasWatermark !== 'false') {
